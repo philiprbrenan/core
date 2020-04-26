@@ -34,8 +34,10 @@ my $G = GitHub::Crud::new                                                       
  (userid=>$sourceUser, repository=>$sourceRepo, personalAccessToken=>$token);
 
 if (1)                                                                          # Delete generated files
- {for my $file($g->list)
-   {if ($file =~ m($fileRe))
+ {lll "Delete files";
+  for my $file($g->list)
+   {lll "File:", $file;
+    if ($file =~ m($fileRe))
      {lll "Delete $file";
       $g->gitFile = $file;
       $g->delete;
@@ -44,8 +46,10 @@ if (1)                                                                          
  }
 
 if (1)                                                                          # Refresh deleted files from source repository
- {for my $file($G->list)
-   {if ($file =~ m($fileRe))
+ {lll "Refresh files";
+  for my $file($G->list)
+   {lll "File:", $file;
+    if ($file =~ m($fileRe))
      {lll "Refresh $file";
       $G->gitFile = $g->gitFile = $file;
       $g->write($G->read);                                                      # Copy from source repository to our repository
