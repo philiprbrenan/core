@@ -1,4 +1,4 @@
-#!/usr/bin/perl -I/home/phil/perl/cpan/DataTableText/lib/ -I/home/phil/perl/cpan/GitHubCrud/lib/
+#!/usr/bin/perl
 #-------------------------------------------------------------------------------
 # Generate documentation from Python modules
 # Philip R Brenan at gmail dot com, Appa Apps Ltd Inc., 2020
@@ -11,13 +11,9 @@ use Data::Table::Text qw(:all);
 use GitHub::Crud;
 
 my $local   = !$ENV{CI};                                                        # Local run not on GitHub
-my $home    = $local ? q(/home/phil/vita/core/) : q(.);                         # Home folder
+my $home    = q(.);                                                             # Home folder
 my $modules = fpd($home, qw(vita modules));                                     # Modules folder
 my $docs    = fpd($home, q(docs));                                              # Output documentation
-
-my $user =  q(philiprbrenan);                                                   # Owner of web page repository
-my $repo = qq($user.github.io);                                                 # Web page repository
-my $docg = fpd(qw(vita));                                                       # Documentation folder in web page repository
 
 my @errors;                                                                     # Record missing documentation and tests
 
@@ -55,20 +51,3 @@ $h
 </html>
 END
  }
-
-if ($local)                                                                     # Upload documentation to philiprbrenan.github.io/vita/index.html
- {my @f = searchDirectoryTreesForMatchingFiles($docs, q(.html));                # Files we want to upload
-  for my $s(@f)
-   {my $t = swapFilePrefix($s, $docs, $docg);
-    lll $t;
-    GitHub::Crud::writeFileFromFileUsingSavedToken($user, $repo, $t, $s);
-   }
- }
-
-
-=pod
-
-cd /home/phil/vita/core/github/; pp -I /home/phil/perl/cpan/DataTableText/lib -I /home/phil/perl/cpan/GitHubCrud/lib generateDocumentation.pl; mv a.out generateDocumentation.perl
-
-=cut
-

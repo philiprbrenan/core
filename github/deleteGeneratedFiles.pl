@@ -1,6 +1,6 @@
-#!/usr/bin/perl -I/home/phil/perl/cpan/GitHubCrud/lib
+#!/usr/bin/perl
 #-------------------------------------------------------------------------------
-# Prevent generated files from complicating pull requests
+# Reduce pull request size by synchronizing generated files in advance.
 # Philip R Brenan at gmail dot com, Appa Apps Ltd, 2020
 #-------------------------------------------------------------------------------
 use v5.16;
@@ -13,17 +13,16 @@ use GitHub::Crud;
 my $sourceUser  = q(vitaproject);                                               # The original repository from whence we were cloned
 my $sourceRepo  = q(core);
 my $controlFile = q(.github/control/prepareForPullRequest.txt);                 # The file whose presence triggers this action
-my $fileRe      = qr((docs/.*html|out/.*svg)\s*\Z)i;                          # Select the generated files
+my $fileRe      = qr((docs/.*html|out/.*svg)\s*\Z)i;                            # Select the generated files
 
 my ($userRepo, $user, $repo, $token);
 
 if (@ARGV == 2)                                                                 # Called from GitHub
- {($userRepo, $token) = map {$_ // ''} @ARGV;
+ {($userRepo, $token) = @ARGV;
   ($user, $repo)      = split m(/), $userRepo, 2;
  }
 else                                                                            # Called locally
- {$user = 'philiprbrenan';
-  $repo = 'core';
+ {say STDERR "Please supply user/repo and access token";
  }
 
 say STDERR "Delete and refresh generated files in $user/$repo";                 # The title of the piece
@@ -34,7 +33,7 @@ my $g = GitHub::Crud::new                                                       
 my $G = GitHub::Crud::new                                                       # The original github repo
  (userid=>$sourceUser, repository=>$sourceRepo, personalAccessToken=>$token);
 
-if (0)                                                                          # Delete generated files
+if (1)                                                                          # Delete generated files
  {for my $file($g->list)
    {if ($file =~ m($fileRe))
      {lll "Delete $file";
@@ -49,16 +48,12 @@ if (1)                                                                          
    {if ($file =~ m($fileRe))
      {lll "Refresh $file";
       $G->gitFile = $g->gitFile = $file;
-      $g->write($G->read);                                                        # Copy from source repository to our repository
+      $g->write($G->read);                                                      # Copy from source repository to our repository
      }
    }
  }
 
-$g->gitFile = q(.github/control/prepareForPullRequest.txt);                     # Remove control file
-$g->delete;
-
-=pod
-
-cd /home/phil/vita/core/github/; pp -I /home/phil/perl/cpan/GitHubCrud/lib deleteGeneratedFiles.pl; mv a.out deleteGeneratedFiles.perl
-
-=cut
+for my $control(qw(prepareForPullRequest runTestsInClone))
+ {$g->gitFile = fpe(qw(.github control), $control, q(txt));
+  $g->delete;
+ }
