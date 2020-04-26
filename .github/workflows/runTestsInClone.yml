@@ -1,4 +1,4 @@
-name: Vita regeneration but only in a cloned copy 
+name: Vita regeneration but only in a cloned copy  
 
 on:
   push:
