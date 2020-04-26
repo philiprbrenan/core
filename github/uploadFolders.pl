@@ -1,4 +1,4 @@
-#!/usr/bin/perl -I/home/phil/perl/cpan/GitHubCrud/lib
+#!/usr/bin/perl
 #-------------------------------------------------------------------------------
 # Upload the the folders specified on the command line to GitHub from a workflow
 # Philip R Brenan at gmail dot com, Appa Apps Ltd, 2020
@@ -13,8 +13,13 @@ $userRepo or die 'Cannot find environment variable: $GITHUB_REPOSITORY';
 
 my $token    = $ENV{token};                                                     # Access token
 $token or die 'Cannot find token';
+                                                                                # Choose a branch
+my $branch   = sub
+ {return $ARGV[0] if @ARGV;
+  q(master)
+ }->();
 
-lll "Upload folders to $userRepo";
+lll "Upload folders to $userRepo, branch $branch";                              # Title
 
 my $folders;                                                                    # Number of folders uploaded
 
@@ -24,8 +29,17 @@ for my $folder(@ARGV)                                                           
    {lll "No such folder: $folder";
     next;
    }
-  my ($u, $r) = split m(/), $userRepo, 2;
-  GitHub::Crud::writeFolderUsingSavedToken  $u, $r, $folder, $folder, $token;   # Upload folder to repo using token
+
+  my $g = GitHub::Crud::new;                                                    # Github controller
+ ($g->userid, $g->repository)   = split m(/), $userRepo, 2;
+  $g->branch                    = $branch;
+  $g->personalAccessTokenFolder = $token;
+
+  for my $file(searchDirectoryTreesForMatchingFiles($folder))                   # Load each file
+   {$g->gitFile = $file;
+    $g->write(readBinaryFile($file));
+   }
+
   ++$folders
  }
 
