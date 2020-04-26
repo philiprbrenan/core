@@ -1,9 +1,14 @@
-name: Vita regeneration but only in a cloned copy
+name: Vita regeneration but only in a cloned copy   
 
 on:
   push:
     paths:
+<<<<<<< HEAD
     - '.github/control/runTestsInClone.txt'
+=======
+    - '.github/control/runTestsInClone.txt'  
+
+>>>>>>> b34e10b34a0615201ce1a74779cff8cbced35284
 
 jobs:
   build:
