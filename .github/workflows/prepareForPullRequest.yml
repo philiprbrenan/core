@@ -21,7 +21,7 @@ jobs:
         sudo cpan install Data::Table::Text GitHub::Crud Data::Dump 1>/dev/null
 
 
-    - name: Deleted and refresh
+    - name: Delete and refresh generated files so they match in a pull request
       env:
          token: ${{ secrets.GITHUB_TOKEN }}
       run: |
