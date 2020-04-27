@@ -19,7 +19,7 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip --user setuptools numpy
         python3 -m pip install --upgrade pip --user vtk scipy matplotlib cherab
-        python3 -m pip install --upgrade pip --user h5py multiprocessing
+        python3 -m pip install --upgrade pip --user h5py
         python3 setup.py
 
     - name: Install software packages from cpan
