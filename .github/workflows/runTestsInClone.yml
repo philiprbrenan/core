@@ -15,7 +15,12 @@ jobs:
     - name: Download repository
       uses: actions/checkout@v2
 
-    - name: Install software packages
+    - name: Install software packages from pypi
+      run: |
+        python3 -m pip install --upgrade pip --user numpy vtk scipy matplotlib cherab h5py setuptools multiprocessing
+        python3 setup.py
+
+    - name: Install software packages from cpan
       run: |
         export PERL_MM_USE_DEFAULT=1
         sudo cpan install Data::Table::Text GitHub::Crud Data::Dump 1>/dev/null
@@ -23,8 +28,6 @@ jobs:
         sudo apt install -qq python-configobj tree
         mkdir -p out
         tree
-        python3 -m pip install --upgrade pip --user vtk scipy numpy matplotlib cherab h5py
-
     - name: Run unit tests
       run: |
         python3 vita/modules/utils/Vector2.py
@@ -58,4 +61,4 @@ jobs:
          token: ${{ secrets.GITHUB_TOKEN }}
       run: |
         tree
-        perl github/uploadFolders.pl docs/ out/ --branch=bbb
+        perl github/uploadFolders.pl docs/ out/ --branch=aaa
