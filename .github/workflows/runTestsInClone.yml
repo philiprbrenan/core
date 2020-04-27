@@ -24,7 +24,6 @@ jobs:
         mkdir -p out
         tree
         python3 -m pip install --upgrade pip --user vtk scipy numpy matplotlib cherab h5py
-        dev/build.sh
 
     - name: Run unit tests
       run: |
